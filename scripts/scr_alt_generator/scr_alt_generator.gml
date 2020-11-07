@@ -1,5 +1,19 @@
+enum AreaSides{
+	top,
+	right,
+	bottom,
+	left
+}
+
+function Point(_x, _y) constructor{
+	x = _x;
+	y = _y;
+}
+
 function generateMap(){
 	randomize();
+	random_set_seed(2774115993);
+	show_debug_message("Seed: "+ string(random_get_seed()));
 	//Values for tiles
 	wall = -1;
 	door = -2;
@@ -12,11 +26,11 @@ function generateMap(){
 	
 	var minAreaSize = 8
 	var maxAreaSize = min(25, round(min(width, length)/2));
-	mergeAreaSize = round((minAreaSize*maxAreaSize)/2);
+	//var mergeAreaSize = round((minAreaSize*maxAreaSize)/2);
 	
 	var map = createBSPGrid(width, length, minAreaSize, maxAreaSize);
 	
-	mergeAreas(map);
+	mergeAreas(map, minAreaSize);
 	
 	//Check if area is merged by finding corners of area then checking one over each side to see if area is surrounded by walls, 
 	//if cell is not a wall that cell belongs to a merged area
@@ -95,14 +109,14 @@ function leaf(grid, x1, y1, x2, y2, minAreaSize, maxAreaSize, dir){
 	if(leafFailed && is_undefined(dir)) leaf(grid, x1, y1, x2, y2, minAreaSize, maxAreaSize, !horiz);
 }
 	
-function mergeAreas(map){
+function mergeAreas(map, minAreaSize){
 	var merges = irandom_range(0, ceil(areaNum/4));
 	var completedMerges = 0;
 	var usedAreas = ds_list_create();
 	
 	var mapWidth = ds_grid_width(map), mapLength = ds_grid_height(map);
 	
-	while(merges > completedMerges && areaNum > ds_list_size(usedAreas)){
+	while(/*merges > completedMerges && */areaNum > ds_list_size(usedAreas)){
 			//Choose num of random area
 			var area = irandom_range(0, areaNum);
 			
@@ -119,10 +133,105 @@ function mergeAreas(map){
 				//Find bottom right edges by stepping through until a num diffrent from area is found
 				do{x2++;}until(ds_grid_get(map, x2, y1) != area);
 				do{y2++;}until(ds_grid_get(map, x1, y2) != area);
+				x2--; 
+				y2--;
 				
-				//Choose point on side
-				//Check in both directions until perpendicular wall is reached on either side
+				//Determine what sides can be merged
+				var sides = ds_list_create();
+				if(x1 != 1) ds_list_add(sides, AreaSides.left);
+				if(y1 != 1) ds_list_add(sides, AreaSides.top);
+				if(x2 != mapWidth - 1) ds_list_add(sides, AreaSides.right);
+				if(y2 != mapLength - 1) ds_list_add(sides, AreaSides.bottom);
+				
+				var mergeSuccessful = false;
+				
+				do{
+					//Choose side to be merged and determine offset to other area
+					var side = ds_list_find_value(sides, irandom_range(0, ds_list_size(sides)-1));
+					ds_list_delete(sides,ds_list_find_index(sides, side));
+				
+				
+					var offset = (side == AreaSides.top || side == AreaSides.left) ? -2 : 2;
+				
+					var mergePoints = ds_list_create(); //Store the points on the wall to merge
+				
+					var sideAttempts = 0;
+				
+					if(area == 5){
+						ds_list_find_index(mergePoints, area);
+					}
+				
+					do{
+						ds_list_clear(mergePoints);
+						var mergeX, mergeY;
+					
+						//Choose point on side to start merge
+						switch(side){
+							case AreaSides.top:
+								mergeX = irandom_range(x1+1, x2-1);
+								mergeY = y1;
+								break;
+							case AreaSides.right:
+								mergeX = x2;
+								mergeY = irandom_range(y1+1, y2-1);
+								break;
+							case AreaSides.bottom:
+								mergeX = irandom_range(x1+1, x2-1);
+								mergeY = x2;
+							case AreaSides.left:
+								mergeX = x1;
+								mergeY = irandom_range(y1+1, y2-1);
+								break;
+							
+						}
+					
+						//Check in both directions until perpendicular wall is reached on either side
+						if(side == AreaSides.top || side == AreaSides.bottom){
+							var otherRoom = ds_grid_get(map, mergeX, mergeY + offset);
+						
+							if(otherRoom != wall && ds_list_find_index(usedAreas, otherRoom)){
+						
+								//Add points at and above merge point until wall is reached
+								for(var _x = mergeX; _x >= x1; _x--){
+									if(ds_grid_get(map, _x, mergeY + offset) == wall) break;
+									ds_list_add(mergePoints, new Point(_x, mergeY + (offset/2)));
+								}
+						
+								for(var _x = mergeX + 1; _x <= x2; _x++){
+									if(ds_grid_get(map, _x, mergeY + offset) == wall) break;
+									ds_list_add(mergePoints, new Point(_x, mergeY + (offset/2)));
+								}
+							}else{
+								sideAttempts++;	
+							}
+						}else{
+							var otherRoom = ds_grid_get(map, mergeX + offset, mergeY);
+						
+							if(otherRoom != wall && ds_list_find_index(usedAreas, otherRoom)){
+								for(var _y = mergeY; _y >= y1; _y--){
+									if(ds_grid_get(map, mergeX + offset, _y) == wall) break;
+									ds_list_add(mergePoints, new Point(mergeX + (offset/2), _y));	
+								}
+						
+								for(var _y = mergeY + 1; _y <= y2; _y++){
+									if(ds_grid_get(map, mergeX + offset, _y) == wall) break;
+									ds_list_add(mergePoints, new Point(mergeX + (offset/2), _y));	
+								}
+							}else{
+								sideAttempts++;	
+							}
+						}
+						
+						if(ds_list_size(mergePoints) >= minAreaSize) mergeSuccessful = true;
+				
+					}until(mergeSuccessful || sideAttempts >= 10);
+					
+				}until(mergeSuccessful || ds_list_size(sides) <= 0);
+				
 				//Change sepparating wall to be nom of the area being computed
+				for(var i = 0; i < ds_list_size(mergePoints); i++){
+					ds_grid_set(map, mergePoints[| i].x, mergePoints[| i].y, area);
+				}
 				
 			}
 	}

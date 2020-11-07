@@ -1,6 +1,7 @@
+scale = 20;
 map = generateMap();
-width = 20 + ds_grid_width(map) * 10;
-height = 20 + ds_grid_height(map) * 10;
+width = (2*scale) + (ds_grid_width(map) * scale);
+height = (2*scale) + (ds_grid_height(map) * scale)
 
 room_width = width;
 room_height = height;
