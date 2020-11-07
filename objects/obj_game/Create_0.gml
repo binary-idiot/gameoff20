@@ -1,5 +1,7 @@
 scale = 20;
-map = generateMap();
+data = generateMap();
+map = data.map;
+areas = data.areas;
 width = (2*scale) + (ds_grid_width(map) * scale);
 height = (2*scale) + (ds_grid_height(map) * scale)
 
