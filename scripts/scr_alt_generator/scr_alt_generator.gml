@@ -279,7 +279,10 @@ function findAreas(map){
 		if(x1 != 1){
 			for(var _y = y1; _y <= y2; _y++){
 				var otherArea = ds_grid_get(map, x1 - 1, _y);
-				if(otherArea != wall && ds_list_find_index(areaData.connectedAreas, otherArea) != -1){
+				if(otherArea == area){
+					var otherArea = ds_grid_get(map, x1 - 2, _y);	
+				}
+				if(otherArea != wall && ds_list_find_index(areaData.connectedAreas, otherArea) == -1){
 					areaData.addConnectedArea(otherArea);
 				}
 			}
@@ -287,8 +290,11 @@ function findAreas(map){
 			
 		if(x1 != mapWidth - 1){
 			for(var _y = y1; _y <= y2; _y++){
-				var otherArea = ds_grid_get(map, x1 + 1, _y);
-				if(otherArea != wall && ds_list_find_index(areaData.connectedAreas, otherArea) != -1){
+				var otherArea = ds_grid_get(map, x2 + 1, _y);
+				if(otherArea == area){
+					var otherArea = ds_grid_get(map, x2 + 2, _y);	
+				}
+				if(otherArea != wall && otherArea == -1){
 					areaData.addConnectedArea(otherArea);
 				}
 			}
@@ -297,7 +303,10 @@ function findAreas(map){
 		if(y1 != 1){
 			for(var _x = x1; _x <= x2; _x++){
 				var otherArea = ds_grid_get(map, _x, y1 - 1);
-				if(otherArea != wall && ds_list_find_index(areaData.connectedAreas, otherArea) != -1){
+				if(otherArea == area){
+					var otherArea = ds_grid_get(map, _x, y1 - 2);	
+				}
+				if(otherArea != wall && ds_list_find_index(areaData.connectedAreas, otherArea) == -1){
 					areaData.addConnectedArea(otherArea);
 				}
 			}
@@ -305,8 +314,11 @@ function findAreas(map){
 			
 		if(y1 != mapLength -1){
 			for(var _x = x1; _x <= x2; _x++){
-				var otherArea = ds_grid_get(map, _x, y1 + 1);
-				if(otherArea != wall && ds_list_find_index(areaData.connectedAreas, otherArea) != -1){
+				var otherArea = ds_grid_get(map, _x, y2 + 1);
+				if(otherArea == area){
+					var otherArea = ds_grid_get(map, _x, y2 + 2);	
+				}
+				if(otherArea != wall && ds_list_find_index(areaData.connectedAreas, otherArea) == -1){
 					areaData.addConnectedArea(otherArea);
 				}
 			}
