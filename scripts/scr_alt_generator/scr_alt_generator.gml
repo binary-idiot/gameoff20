@@ -294,7 +294,7 @@ function findAreas(map){
 				if(otherArea == area){
 					var otherArea = ds_grid_get(map, x2 + 2, _y);	
 				}
-				if(otherArea != wall && otherArea == -1){
+				if(otherArea != wall && ds_list_find_index(areaData.connectedAreas, otherArea) == -1){
 					areaData.addConnectedArea(otherArea);
 				}
 			}
