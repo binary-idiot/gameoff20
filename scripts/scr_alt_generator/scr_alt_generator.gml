@@ -24,9 +24,17 @@ function createAreaData(_num, _point1, _point2){
 	}
 }
 
+function ds_grid_set_rectangle(grid, x1, y1, x2, y2, val) {
+    for (var i = x1; i <= x2; ++i) {
+        for (var j = y1; j <= y2; ++j) {
+            grid[# i, j] = val;
+        }
+    }
+}
+
 function generateMap(){
-	//randomize();
-	random_set_seed(2);
+	randomize();
+	//random_set_seed(2);
 	show_debug_message("Seed: "+ string(random_get_seed()));
 	//Values for tiles
 	wall = -1;
@@ -53,7 +61,7 @@ function generateMap(){
 	
 	return {
 		map : map,
-		areas : areas
+		//areas : areas
 	};
 }
 
@@ -63,14 +71,14 @@ function createBSPGrid(width, length, minAreaSize, maxAreaSize){
 	var grid = ds_grid_create(width, length);
 	
 	//Set everything to walls
-	ds_grid_set_region(grid, 0, 0, width-1, length-1, wall);
+	ds_grid_set_rectangle(grid, 0, 0, width-1, length-1, wall);
 	
 	//Assign cords for area
 	var x1 = 1, y1 = 1;
 	var x2 = width - 2, y2 = length - 2;
 	
 	//Assign area
-	ds_grid_set_region(grid, x1, y1, x2, y2, areaNum);
+	ds_grid_set_rectangle(grid, x1, y1, x2, y2, areaNum);
 	
 	leaf(grid, x1, y1, x2, y2, minAreaSize, maxAreaSize);
 	
@@ -95,14 +103,14 @@ function leaf(grid, x1, y1, x2, y2, minAreaSize, maxAreaSize, dir){
 		if(!(y1 + size >= y2 - size)){
 			var hSplit = irandom_range(y1 + oSize , y2 - oSize);
 		
-			ds_grid_set_region(grid, x1, y1, x2, hSplit - 1, areaNum);
+			ds_grid_set_rectangle(grid, x1, y1, x2, hSplit - 1, areaNum);
 			leaf(grid, x1, y1, x2, hSplit - 1, minAreaSize, maxAreaSize);
 			areaNum++;
 		
-			ds_grid_set_region(grid, x1, hSplit + 1, x2, y2, areaNum);
+			ds_grid_set_rectangle(grid, x1, hSplit + 1, x2, y2, areaNum);
 			leaf(grid, x1, hSplit + 1, x2, y2, minAreaSize, maxAreaSize);
 		
-			ds_grid_set_region(grid, x1, hSplit, x2, hSplit, wall);
+			ds_grid_set_rectangle(grid, x1, hSplit, x2, hSplit, wall);
 		}else{
 			leafFailed = true;
 		}
@@ -112,14 +120,14 @@ function leaf(grid, x1, y1, x2, y2, minAreaSize, maxAreaSize, dir){
 		if(!(x1 + size >= x2 - size)){
 			var vSplit = irandom_range(x1 + oSize , x2 - oSize);
 		
-			ds_grid_set_region(grid, x1, y1, vSplit - 1, y2, areaNum);
+			ds_grid_set_rectangle(grid, x1, y1, vSplit - 1, y2, areaNum);
 			leaf(grid, x1, y1, vSplit - 1, y2, minAreaSize, maxAreaSize);
 			areaNum++;
 		
-			ds_grid_set_region(grid, vSplit + 1, y1, x2, y2, areaNum);
+			ds_grid_set_rectangle(grid, vSplit + 1, y1, x2, y2, areaNum);
 			leaf(grid, vSplit + 1, y1, x2, y2, minAreaSize, maxAreaSize);
 		
-			ds_grid_set_region(grid, vSplit, y1, vSplit, y2, wall);
+			ds_grid_set_rectangle(grid, vSplit, y1, vSplit, y2, wall);
 		}else{
 			leafFailed = true;	
 		}
