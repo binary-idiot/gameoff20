@@ -12,15 +12,21 @@ function Point(_x, _y) constructor{
 
 function createAreaData(_num, _point1, _point2){
 	var areas = ds_list_create();
+	var neigh = ds_list_create();
 	
 	return {
 		num : _num,
 		point1 : _point1,
 		point2 : _point2,
 		connectedAreas : areas,
-		addConnectedArea : function(_connectedArea){
-			ds_list_add(connectedAreas, _connectedArea);	
+		neighbors : neigh,
+		addConnectedArea : function(area){
+			ds_list_add(connectedAreas, area);	
+		},
+		addNeighbor : function(neighbor){
+			ds_list_add(neighbors, neighbor);
 		}
+		
 	}
 }
 
@@ -61,7 +67,7 @@ function generateMap(){
 	
 	return {
 		map : map,
-		//areas : areas
+		areas : areas
 	};
 }
 
@@ -266,7 +272,6 @@ function mergeAreas(map, minAreaSize){
 	}
 }
 
-
 function findAreas(map){
 	var areas = ds_list_create();
 		
@@ -336,6 +341,40 @@ function findAreas(map){
 			
 	}
 	
+	areas = findNeighbors(areas);
+	
 	return areas;
 	
+}
+
+function findNeighbors(areas){
+	for(var i = 0; i < ds_list_size(areas); i++){
+		var area = areas[| i];
+		for(var j = 0; j <ds_list_size(areas); j++){
+			var otherArea = areas[| j];
+			if(area.num == otherArea.num) continue;
+			if(ds_list_find_index(area.connectedAreas, otherArea.num) != -1){
+				area.addNeighbor(otherNeighbor.num);
+				continue;
+			}
+			
+			if((area.point1.x > otherArea.point1.x && area.point1.x < otherArea.point2.x)
+				&& (area.point1.y - 2 == otherArea.point2.y || area.point2.y + 2 == otherArea.point1.y)){
+					
+			} else if((area.point1.x < otherArea.point1.x && area.point2.x > otherArea.point1.x)
+				&& (area.point1.y - 2 == otherArea.point2.y || area.point2.y + 2 == otherArea.point1.y)){
+					
+			}
+		}
+	}
+	
+	return areas;
+}
+	
+function addDoors(map, areas){
+		var area = irandom_range(0, areaNum-1);
+		
+		do{
+			
+		}until();
 }
