@@ -1,8 +1,10 @@
 {
-  "name": "TileSet1",
-  "spriteId": null,
-  "tileWidth": 16,
-  "tileHeight": 16,
+  "spriteId": {
+    "name": "spr_tileset",
+    "path": "sprites/spr_tileset/spr_tileset.yy",
+  },
+  "tileWidth": 32,
+  "tileHeight": 32,
   "tilexoff": 0,
   "tileyoff": 0,
   "tilehsep": 0,
@@ -14,14 +16,18 @@
   },
   "out_tilehborder": 2,
   "out_tilevborder": 2,
-  "out_columns": 0,
-  "tile_count": 0,
+  "out_columns": 2,
+  "tile_count": 3,
   "autoTileSets": [],
   "tileAnimationFrames": [],
   "tileAnimationSpeed": 15.0,
   "tileAnimation": {
-    "FrameData": [],
-    "SerialiseFrameCount": 0,
+    "FrameData": [
+      0,
+      1,
+      2,
+    ],
+    "SerialiseFrameCount": 1,
   },
   "macroPageTiles": {
     "SerialiseWidth": 0,
@@ -33,6 +39,7 @@
     "path": "folders/Tile Sets.yy",
   },
   "resourceVersion": "1.0",
+  "name": "ts_structure",
   "tags": [],
   "resourceType": "GMTileSet",
 }

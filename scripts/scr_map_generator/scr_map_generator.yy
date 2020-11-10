@@ -6,7 +6,7 @@
     "path": "folders/Scripts.yy",
   },
   "resourceVersion": "1.0",
-  "name": "scr_alt_generator",
+  "name": "scr_map_generator",
   "tags": [],
   "resourceType": "GMScript",
 }
