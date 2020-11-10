@@ -54,12 +54,12 @@ function generateMap(){
 	mapAreaNum = 0;
 	
 	//Parameters
-	var minArea = 25, maxArea = 75;
+	var minArea = 30, maxArea = 50;
 	var width = irandom_range(minArea, maxArea);
 	var length = irandom_range(minArea, maxArea);
 	
-	var minAreaSize = 6;
-	var maxAreaSize = min(20, round(min(width, length)/2));
+	var minAreaSize = 4;
+	var maxAreaSize = min(15, round(min(width, length)/2));
 	//var mergeAreaSize = round((minAreaSize*maxAreaSize)/2);
 	
 	var map = createBSPGrid(width, length, minAreaSize, maxAreaSize);
