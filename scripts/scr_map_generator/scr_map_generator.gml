@@ -45,9 +45,6 @@ function ds_grid_set_rectangle(grid, x1, y1, x2, y2, val) {
 }
 
 function generateMap(){
-	randomize();
-	//random_set_seed(59769744);
-	show_debug_message("Seed: "+ string(random_get_seed()));
 	//Values for tiles
 	mapWallTile = -1;
 	mapDoorTile = -2;
