@@ -8,7 +8,7 @@ for(var _y = 0; _y < ds_grid_height(map); _y++){
 
 for(var _x = 0; _x < ds_grid_width(map); _x++){
 	for(var _y = 0; _y < ds_grid_height(map); _y++){
-		var xPos = scale + (_x * scale), yPos = scale + (_y * 20);
+		var xPos = scale + (_x * scale), yPos = scale + (_y * scale);
 		if(map[# _x, _y] == -1){
 			draw_sprite(spr_test, 0, xPos, yPos);
 		}

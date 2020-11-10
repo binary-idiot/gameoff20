@@ -46,7 +46,7 @@ function ds_grid_set_rectangle(grid, x1, y1, x2, y2, val) {
 
 function generateMap(){
 	randomize();
-	//random_set_seed(734409754);
+	//random_set_seed(59769744);
 	show_debug_message("Seed: "+ string(random_get_seed()));
 	//Values for tiles
 	mapWallTile = -1;
@@ -54,12 +54,12 @@ function generateMap(){
 	mapAreaNum = 0;
 	
 	//Parameters
-	var minArea = 25, maxArea = 100;
+	var minArea = 25, maxArea = 75;
 	var width = irandom_range(minArea, maxArea);
 	var length = irandom_range(minArea, maxArea);
 	
-	var minAreaSize = 8
-	var maxAreaSize = min(25, round(min(width, length)/2));
+	var minAreaSize = 6;
+	var maxAreaSize = min(20, round(min(width, length)/2));
 	//var mergeAreaSize = round((minAreaSize*maxAreaSize)/2);
 	
 	var map = createBSPGrid(width, length, minAreaSize, maxAreaSize);
@@ -391,9 +391,6 @@ function addDoors(map, areas){
 		
 		//Add doors between rooms until all rooms have been visited
 		do{
-			if(ds_list_find_index(visited, area) == -1){
-				ds_list_add(visited, area);
-			}
 			
 			var otherArea;
 			var attempts = ds_list_create();
@@ -423,15 +420,29 @@ function addDoors(map, areas){
 				}
 			}
 			
+							
+			var doorPlaced = true;
 			//Connect unconnected rooms
 			if(ds_list_find_index(area.connectedAreas, otherArea.num) == -1 && !connViaMergedArea){
 				var _x, _y;
+				var _x2 = -1, _y2 = -1;
+				
 				//Top
 				if(area.point1.y > otherArea.point2.y){
 					var x1 = (area.point1.x > otherArea.point1.x)? area.point1.x : otherArea.point1.x;
 					var x2 = (area.point2.x < otherArea.point2.x)? area.point2.x : otherArea.point2.x;
 					_x = irandom_range(x1, x2);
 					_y = area.point1.y-1;
+					
+					
+					var offset = choose(-1, 1);
+					if((map[# _x + offset, area.point1.y] == area.num) && (map[# _x + offset, otherArea.point1.y] == otherArea.num)){
+						_x2 = _x + offset;
+					}else if((map[# _x - offset, area.point1.y] == area.num) && (map[# _x - offset, otherArea.point1.y] == otherArea.num)){
+						_x2 = _x - offset;
+					}else{
+						doorPlaced = false;
+					}
 				
 				//Bottom
 				}else if(area.point2.y < otherArea.point1.y){
@@ -440,12 +451,30 @@ function addDoors(map, areas){
 					_x = irandom_range(x1, x2);
 					_y = otherArea.point1.y-1;
 					
+					var offset = choose(-1, 1);
+					if((map[# _x + offset, area.point1.y] == area.num) && (map[# _x + offset, otherArea.point1.y] == otherArea.num)){
+						_x2 = _x + offset;
+					}else if((map[# _x - offset, area.point1.y] == area.num) && (map[# _x - offset, otherArea.point1.y] == otherArea.num)){
+						_x2 = _x - offset;
+					}else{
+						doorPlaced = false;
+					}
+					
 				//Right
 				}else if(area.point1.x > otherArea.point2.x){
 					var y1 = (area.point1.y > otherArea.point1.y)? area.point1.y : otherArea.point1.y;
 					var y2 = (area.point2.y < otherArea.point2.y)? area.point2.y : otherArea.point2.y;
 					_y = irandom_range(y1, y2);
 					_x = area.point1.x-1;
+					
+					var offset = choose(-1, 1);
+					if((map[# area.point1.x, _y + offset] == area.num) && (map[# otherArea.point1.x, _y + offset] == otherArea.num)){
+						_y2 = _y + offset;
+					}else if((map[# area.point1.x, _y - offset] == area.num) && (map[# otherArea.point1.x, _y - offset] == otherArea.num)){
+						_y2 = _y - offset;
+					}else{
+						doorPlaced = false;
+					}
 				
 				//Left
 				}else{
@@ -454,15 +483,38 @@ function addDoors(map, areas){
 					_y = irandom_range(y1, y2);
 					_x = otherArea.point1.x-1;
 					
+					var offset = choose(-1, 1);
+					if((map[# area.point1.x, _y + offset] == area.num) && (map[# otherArea.point1.x, _y + offset] == otherArea.num)){
+						_y2 = _y + offset;
+					}else if((map[# area.point1.x, _y - offset] == area.num) && (map[# otherArea.point1.x, _y - offset] == otherArea.num)){
+						_y2 = _y - offset;
+					}else{
+						doorPlaced = false;
+					}
+					
 				}
 				
-				map[# _x, _y] = mapDoorTile;
-				area.addConnectedArea(otherArea.num);
-				otherArea.addConnectedArea(area.num);
+				
+				if(_y == 19 || _y2 == 19) show_debug_message("Error");
+				if(doorPlaced){
+					map[# _x, _y] = mapDoorTile;
+					if(_x2 != -1) map[# _x2, _y] = mapDoorTile;
+					else map[# _x, _y2] = mapDoorTile;
+					area.addConnectedArea(otherArea.num);
+					otherArea.addConnectedArea(area.num);
+					
+				}
 			}
 			
-			area = otherArea;
-		}until(ds_list_size(visited) >= mapAreaNum);
+			if(doorPlaced){
+				if(ds_list_find_index(visited, area) == -1){
+					ds_list_add(visited, area);
+				}
+				area = otherArea;
+			}else{
+				ds_list_delete(area.neighbors, ds_list_find_index(area.neighbors, otherArea.num));
+			}
+		}until(ds_list_size(visited) >= ds_list_size(areas));
 		
 		//Ensure all merged areas are in connected list even if not connected through above code
 		for(var i = 0; i < ds_list_size(areas); i++){
