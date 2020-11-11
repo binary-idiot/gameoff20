@@ -2,7 +2,6 @@
   "resources": [
     {"id":{"name":"obj_map","path":"objects/obj_map/obj_map.yy",},"order":0,},
     {"id":{"name":"ts_structure","path":"tilesets/ts_structure/ts_structure.yy",},"order":0,},
-    {"id":{"name":"fnt_test","path":"fonts/fnt_test/fnt_test.yy",},"order":0,},
     {"id":{"name":"spr_door","path":"sprites/spr_door/spr_door.yy",},"order":1,},
     {"id":{"name":"spr_structure_tileset","path":"sprites/spr_structure_tileset/spr_structure_tileset.yy",},"order":0,},
     {"id":{"name":"obj_door","path":"objects/obj_door/obj_door.yy",},"order":1,},
