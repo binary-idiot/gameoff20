@@ -18,9 +18,6 @@ room_height = mapHeight;
 var mapTileLayer = layer_get_id("MapTiles");
 var instanceLayer = layer_get_id("Instances");
 
-draw_set_font(fnt_test);
-draw_set_color(c_red);
-
 for(var _x = 0; _x < ds_grid_width(map); _x++){
 	
 	for(var _y = 0; _y < ds_grid_height(map); _y++){
@@ -43,3 +40,13 @@ for(var _x = 0; _x < ds_grid_width(map); _x++){
 		}
 	}
 }
+
+var areaNum = irandom_range(0, ds_list_size(areas)-1);
+var area = areas[| areaNum];
+
+var playX = irandom_range(area.point1.x * scale, area.point2.x * scale);
+var playY = irandom_range(area.point1.x * scale, area.point2.y * scale);
+
+instance_create_layer(playX, playY, instanceLayer, obj_player);
+
+
