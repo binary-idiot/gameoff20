@@ -3,8 +3,8 @@ target = obj_player;
 global.cameraX = 0;
 global.cameraY = 0;
 
-global.cameraWidth = 16 * global.baseTileSize;
-global.cameraHeight = 9 * global.baseTileSize;
+global.cameraWidth = 16 * TILESIZE;
+global.cameraHeight = 9 * TILESIZE;
 
 view_enabled = true;
 

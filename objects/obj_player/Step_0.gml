@@ -1,4 +1,4 @@
-var mvSpeed = global.baseTileSize;
+var mvSpeed = TILESIZE;
 var hDir = 0;
 var vDir = 0;
 

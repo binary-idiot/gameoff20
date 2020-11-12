@@ -1,11 +1,11 @@
 randomize();
 //random_set_seed(723463507);
 show_debug_message("Seed: "+ string(random_get_seed()));
-global.baseTileSize = 32;
+
 global.wallTileIndex = 1;
 floorTileIndex = 2;
 
-scale = global.baseTileSize;
+scale = TILESIZE;
 
 data = generateMap();
 map = data.map;

@@ -1,0 +1,1 @@
+#macro TILESIZE 32
