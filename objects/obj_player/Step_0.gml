@@ -20,16 +20,16 @@ if(keyboard_check_pressed(vk_right)){
 
 mapTilemap = layer_tilemap_get_id("MapTiles");
 
-if(hDir == -1 &&  tilemap_get_at_pixel(mapTilemap, bbox_left-1, bbox_bottom) == global.wallTileIndex){
+if(hDir == -1 &&  tilemap_get_at_pixel(mapTilemap, bbox_left-1, bbox_bottom) == global.collisionTileIndex){
 	hDir = 0;	
 }
-if(hDir == 1 && tilemap_get_at_pixel(mapTilemap, bbox_right+1, bbox_bottom) == global.wallTileIndex){
+if(hDir == 1 && tilemap_get_at_pixel(mapTilemap, bbox_right+1, bbox_bottom) == global.collisionTileIndex){
 	hDir = 0;
 }
-if(vDir == -1 && tilemap_get_at_pixel(mapTilemap, x, y-1) == global.wallTileIndex){
+if(vDir == -1 && tilemap_get_at_pixel(mapTilemap, x, y-1) == global.collisionTileIndex){
 	vDir = 0;	
 }
-if(vDir == 1 && tilemap_get_at_pixel(mapTilemap, x, bbox_bottom+1) == global.wallTileIndex){
+if(vDir == 1 && tilemap_get_at_pixel(mapTilemap, x, bbox_bottom+1) == global.collisionTileIndex){
 	vDir = 0;	
 }
 

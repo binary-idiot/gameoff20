@@ -2,7 +2,9 @@ randomize();
 //random_set_seed(723463507);
 show_debug_message("Seed: "+ string(random_get_seed()));
 
-global.wallTileIndex = 1;
+global.collisionTileIndex = 1;
+
+wallTileIndex = 1;
 floorTileIndex = 2;
 
 scale = TILESIZE;
@@ -16,9 +18,9 @@ mapHeight = (ds_grid_height(map) * scale)
 room_width = mapWidth;
 room_height = mapHeight;
 
-var mapTileLayer = layer_get_id("MapTiles");
 var instanceLayer = layer_get_id("Instances");
-var mapTilemap = layer_tilemap_get_id(mapTileLayer)
+var mapTilemap = layer_tilemap_get_id(layer_get_id("MapTiles"));
+var collisionTilemap = layer_tilemap_get_id(layer_get_id("CollisionTiles"));
 
 for(var _x = 0; _x < ds_grid_width(map); _x++){
 	
@@ -27,7 +29,8 @@ for(var _x = 0; _x < ds_grid_width(map); _x++){
 		
 		
 		if(map[# _x, _y] == mapWallTile){
-			tilemap_set_at_pixel(mapTilemap, global.wallTileIndex, _x * scale, _y * scale);	
+			tilemap_set_at_pixel(mapTilemap, wallTileIndex, _x * scale, _y * scale);
+			tilemap_set_at_pixel(collisionTilemap, global.collisionTileIndex, _x * scale, _y * scale);
 		}else{
 			tilemap_set_at_pixel(mapTilemap, floorTileIndex, _x * scale, _y * scale);	
 		}
