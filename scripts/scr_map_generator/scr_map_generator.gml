@@ -31,8 +31,12 @@ function createAreaData(_num, _point1, _point2){
 		},
 		addNeighbor : function(neighbor){
 			ds_list_add(neighbors, neighbor);
+		},
+		destroy : function(){
+			ds_list_destroy(mergedAreas);
+			ds_list_destroy(connectedAreas);
+			ds_list_destroy(neighbors);
 		}
-		
 	}
 }
 
@@ -59,11 +63,16 @@ function generateMap(){
 	var maxAreaSize = min(15, round(min(width, length)/2));
 	//var mergeAreaSize = round((minAreaSize*maxAreaSize)/2);
 	
+	//Create initial map with binary spatial partitioning
 	var map = createBSPGrid(width, length, minAreaSize, maxAreaSize);
 	
+	//Merge areas together for more interesting maps
 	mergeAreas(map, minAreaSize);
 	
+	//Create a list of all areas
 	var areas = findAreas(map);
+	
+	//Add doors to final create final map
 	addDoors(map, areas);
 	
 	return {
@@ -72,7 +81,7 @@ function generateMap(){
 	};
 }
 
-
+///@description Use binary spatial partitioning to create map
 function createBSPGrid(width, length, minAreaSize, maxAreaSize){	
 	//Setup data structures
 	var grid = ds_grid_create(width, length);
@@ -92,12 +101,14 @@ function createBSPGrid(width, length, minAreaSize, maxAreaSize){
 	return grid;
 }
 
+///@description Recursivily split a rectangle into smaller rectangles
 function leaf(grid, x1, y1, x2, y2, minAreaSize, maxAreaSize, dir){
 	var leafFailed = false;
 	var horiz;
 	var size = irandom_range(minAreaSize, maxAreaSize);
 	var oSize = size;
 	
+	//Make split in a random direction if a direction isnt provided
 	if(is_undefined(dir)){
 		horiz = choose(true, false);
 	}else{
@@ -140,13 +151,19 @@ function leaf(grid, x1, y1, x2, y2, minAreaSize, maxAreaSize, dir){
 		}
 	}
 	
+	//If leaf failed and we havent tried spliting in the other direction retry leaf in the other direction
 	if(leafFailed && is_undefined(dir)) leaf(grid, x1, y1, x2, y2, minAreaSize, maxAreaSize, !horiz);
 }
-	
+
+///@description merge areas on the map
 function mergeAreas(map, minAreaSize){
 	var merges = irandom_range(floor(mapAreaNum/6), mapAreaNum - ceil(mapAreaNum/6));
 	var completedMerges = 0;
-	var usedAreas = ds_list_create();
+	
+	//Declare data structures at begining of function to ease mem management
+	var usedAreas = ds_list_create(); //Store the areas that have already attempted merges
+	var sides = ds_list_create(); //Store the sides that can be merged for each area
+	var mergePoints = ds_list_create(); //Store the points on the mapWallTile to merge
 	
 	var mapWidth = ds_grid_width(map) - 1, mapLength = ds_grid_height(map) - 1;
 	
@@ -171,7 +188,7 @@ function mergeAreas(map, minAreaSize){
 			y2--;
 				
 			//Determine what sides can be merged
-			var sides = ds_list_create();
+			ds_list_clear(sides);
 			if(x1 != 1) ds_list_add(sides, AreaSides.left);
 			if(y1 != 1) ds_list_add(sides, AreaSides.top);
 			if(x2 != mapWidth - 1) ds_list_add(sides, AreaSides.right);
@@ -187,7 +204,7 @@ function mergeAreas(map, minAreaSize){
 				
 				var offset = (side == AreaSides.top || side == AreaSides.left) ? -2 : 2;
 				
-				var mergePoints = ds_list_create(); //Store the points on the mapWallTile to merge
+				ds_list_clear(mergePoints);
 				
 				var sideAttempts = 0;
 				
@@ -271,17 +288,24 @@ function mergeAreas(map, minAreaSize){
 				
 		}
 	}
+		
+	ds_list_destroy(usedAreas);
+	ds_list_destroy(sides);
+	ds_list_destroy(mergePoints);
 }
 
+///@description Create list of areas and their merged areas
 function findAreas(map){
 	var areas = ds_list_create();
 		
 	var mapWidth = ds_grid_width(map) - 1, mapLength = ds_grid_height(map) - 1;
 		
 	for(var area = 0; area <= mapAreaNum; area++){
+		//Find upper of area
 		var x1 = ds_grid_value_x(map, 0, 0, mapWidth, mapLength, area);
 		var y1 = ds_grid_value_y(map, 0, 0, mapWidth, mapLength, area);
-			
+		
+		//Find lower corner of each area
 		var x2 = x1, y2 = y1;
 		do{x2++;}until(ds_grid_get(map, x2, y1) != area);
 		do{y2++;}until(ds_grid_get(map, x1, y2) != area);
@@ -289,7 +313,8 @@ function findAreas(map){
 		y2--;
 			
 		var areaData = createAreaData(area, new Point(x1, y1), new Point(x2, y2));
-			
+		
+		//Check each side for a merged area
 		if(x1 != 1){
 			for(var _y = y1; _y <= y2; _y++){
 				var otherArea = ds_grid_get(map, x1 - 1, _y);
@@ -348,17 +373,22 @@ function findAreas(map){
 	
 }
 
+///@Description find neighbors of each area
 function findNeighbors(areas){
 	for(var i = 0; i < ds_list_size(areas); i++){
 		var area = areas[| i];
 		for(var j = 0; j <ds_list_size(areas); j++){
 			var otherArea = areas[| j];
+			
+			//Skip check if area and otherArea are the same or otherArea is a merged area
+			//In the case of a merged area we can add it to the list of neighbors
 			if(area.num == otherArea.num) continue;
 			if(ds_list_find_index(area.mergedAreas, otherArea.num) != -1){
 				area.addNeighbor(otherArea.num);
 				continue;
 			}
 			
+			//Check to see if area and otherArea share a side and if they do add them to list of neighbors
 			if((area.point1.x > otherArea.point1.x && area.point1.x < otherArea.point2.x) || (area.point1.x < otherArea.point1.x && area.point2.x > otherArea.point1.x) || (area.point1.x == otherArea.point1.x)){
 				if(area.point1.y - 2 == otherArea.point2.y || area.point2.y + 2 == otherArea.point1.y){
 					area.addNeighbor(otherArea.num);
@@ -381,31 +411,32 @@ function findNeighbors(areas){
 	
 	return areas;
 }
-	
+
+
+///Walk through areas semi randomly connecting areas as we go until all areas have been visited and thus connected
 function addDoors(map, areas){
 		var area = areas[| irandom_range(0, ds_list_size(areas)-1)];
-		var visited = ds_list_create();
 		
-		//Add doors between rooms until all rooms have been visited
+		//Declare data structures at top of function for easy mem management
+		var visited = ds_list_create(); //Each area visited so far, we are done when this contains all areas
+		var attempts = ds_list_create(); //Keep track of which neighbors we have already tried for each area
+		
+		//Add doors between area until all areas have been visited
 		do{
 			
 			var otherArea;
-			var attempts = ds_list_create();
+			ds_list_clear(attempts);
 			
 			//Randomly select an unconnected neighbor
 			do{
 				do{
-
 					var n = area.neighbors[| irandom_range(0, ds_list_size(area.neighbors) -1)];
-					otherArea = areas[| n];
+					otherArea = areas[| n];		
 					
-					
-					
-				}until(ds_list_find_index(attempts, otherArea) == -1);
+				}until(ds_list_find_index(attempts, otherArea) == -1); //Dont select any neighbors already tried
 				ds_list_add(attempts, otherArea);
 				
-				if(ds_list_size(attempts) >= ds_list_size(area.neighbors)) break;
-				
+				if(ds_list_size(attempts) >= ds_list_size(area.neighbors)) break; //Only use a visited neighbor if all other neighbors have been attempted already
 			}until(ds_list_find_index(visited, otherArea) == -1);
 			
 			//Treat areas linked by a merged area as if they were already connected
@@ -416,13 +447,16 @@ function addDoors(map, areas){
 					break;
 				}
 			}
-			
 							
 			var doorPlaced = true;
-			//Connect unconnected rooms
+			//Connect unconnected areas
 			if(ds_list_find_index(area.connectedAreas, otherArea.num) == -1 && !connViaMergedArea){
 				var _x, _y;
 				var _x2 = -1, _y2 = -1;
+				
+				//Check which side the neighbor is on
+				//For that side pick a random point
+				//For that point make sure that there is a point on either side of the selected that can also have a door
 				
 				//Top
 				if(area.point1.y > otherArea.point2.y){
@@ -491,8 +525,7 @@ function addDoors(map, areas){
 					
 				}
 				
-				
-				if(_y == 19 || _y2 == 19) show_debug_message("Error");
+				//Only make the connection between areas if the door was sucessfully placed
 				if(doorPlaced){
 					map[# _x, _y] = mapDoorTile;
 					if(_x2 != -1) map[# _x2, _y] = mapDoorTile;
@@ -503,6 +536,7 @@ function addDoors(map, areas){
 				}
 			}
 			
+			//If a connection is made add area to the visited areas and then continue with the otherArea as the new area
 			if(doorPlaced){
 				if(ds_list_find_index(visited, area) == -1){
 					ds_list_add(visited, area);
@@ -523,4 +557,7 @@ function addDoors(map, areas){
 				}
 			}
 		}
+		
+		ds_list_destroy(visited);
+		ds_list_destroy(attempts);
 }
