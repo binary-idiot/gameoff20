@@ -47,8 +47,8 @@ for(var _x = 0; _x < ds_grid_width(map); _x++){
 var areaNum = irandom_range(0, ds_list_size(areas)-1);
 var area = areas[| areaNum];
 
-var playX = irandom_range(area.point1.x + 2, area.point2.x - 2) * scale;
-var playY = irandom_range(area.point1.x + 2, area.point2.y - 2) * scale;
+var playX = (irandom_range(area.point1.x + 2, area.point2.x - 2) * scale) + TILESIZE/2;
+var playY = (irandom_range(area.point1.x + 2, area.point2.y - 2) * scale);
 
 instance_create_layer(playX, playY, instanceLayer, obj_player);
 

@@ -1,4 +1,5 @@
 viewId = 0;
+cameraSpeed = .5;
 
 global.cameraShake = 0;
 

@@ -1,6 +1,5 @@
-var mvSpeed = TILESIZE;
-var hDir = 0;
-var vDir = 0;
+hDir = 0;
+vDir = 0;
 
 if(keyboard_check_pressed(vk_up)){
 	vDir = -1;	
@@ -21,10 +20,10 @@ if(keyboard_check_pressed(vk_right)){
 
 mapTilemap = layer_tilemap_get_id("MapTiles");
 
-if(hDir == -1 &&  tilemap_get_at_pixel(mapTilemap, x-sprite_width, bbox_bottom) == global.wallTileIndex){
+if(hDir == -1 &&  tilemap_get_at_pixel(mapTilemap, bbox_left-1, bbox_bottom) == global.wallTileIndex){
 	hDir = 0;	
 }
-if(hDir == 1 && tilemap_get_at_pixel(mapTilemap, x+(sprite_width/2), bbox_bottom) == global.wallTileIndex){
+if(hDir == 1 && tilemap_get_at_pixel(mapTilemap, bbox_right+1, bbox_bottom) == global.wallTileIndex){
 	hDir = 0;
 }
 if(vDir == -1 && tilemap_get_at_pixel(mapTilemap, x, y-1) == global.wallTileIndex){
