@@ -18,18 +18,18 @@ if(keyboard_check_pressed(vk_right)){
 	hDir = 1;	
 }
 
-mapTilemap = layer_tilemap_get_id("MapTiles");
+var collisionTilemap = layer_tilemap_get_id("CollisionTIles");
 
-if(hDir == -1 &&  tilemap_get_at_pixel(mapTilemap, bbox_left-1, bbox_bottom) == global.collisionTileIndex){
+if(hDir == -1 &&  tilemap_get_at_pixel(collisionTilemap, bbox_left-1, bbox_bottom) == global.collisionTileIndex){
 	hDir = 0;	
 }
-if(hDir == 1 && tilemap_get_at_pixel(mapTilemap, bbox_right+1, bbox_bottom) == global.collisionTileIndex){
+if(hDir == 1 && tilemap_get_at_pixel(collisionTilemap, bbox_right+1, bbox_bottom) == global.collisionTileIndex){
 	hDir = 0;
 }
-if(vDir == -1 && tilemap_get_at_pixel(mapTilemap, x, y-1) == global.collisionTileIndex){
+if(vDir == -1 && tilemap_get_at_pixel(collisionTilemap, x, y-1) == global.collisionTileIndex){
 	vDir = 0;	
 }
-if(vDir == 1 && tilemap_get_at_pixel(mapTilemap, x, bbox_bottom+1) == global.collisionTileIndex){
+if(vDir == 1 && tilemap_get_at_pixel(collisionTilemap, x, bbox_bottom+1) == global.collisionTileIndex){
 	vDir = 0;	
 }
 

@@ -1,5 +1,8 @@
 {
   "resources": [
+    {"id":{"name":"obj_door_base","path":"objects/obj_door_base/obj_door_base.yy",},"order":3,},
+    {"id":{"name":"spr_airlock","path":"sprites/spr_airlock/spr_airlock.yy",},"order":2,},
+    {"id":{"name":"obj_airlock_exit","path":"objects/obj_airlock_exit/obj_airlock_exit.yy",},"order":4,},
     {"id":{"name":"obj_player","path":"objects/obj_player/obj_player.yy",},"order":1,},
     {"id":{"name":"obj_map","path":"objects/obj_map/obj_map.yy",},"order":0,},
     {"id":{"name":"obj_camera","path":"objects/obj_camera/obj_camera.yy",},"order":1,},
@@ -10,6 +13,7 @@
     {"id":{"name":"obj_door_helper","path":"objects/obj_door_helper/obj_door_helper.yy",},"order":1,},
     {"id":{"name":"obj_door","path":"objects/obj_door/obj_door.yy",},"order":0,},
     {"id":{"name":"scr_map_generator","path":"scripts/scr_map_generator/scr_map_generator.yy",},"order":1,},
+    {"id":{"name":"obj_airlock","path":"objects/obj_airlock/obj_airlock.yy",},"order":2,},
     {"id":{"name":"spr_collision_tileset","path":"sprites/spr_collision_tileset/spr_collision_tileset.yy",},"order":1,},
     {"id":{"name":"scr_start","path":"scripts/scr_start/scr_start.yy",},"order":2,},
     {"id":{"name":"obj_entity","path":"objects/obj_entity/obj_entity.yy",},"order":0,},

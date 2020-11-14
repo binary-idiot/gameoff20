@@ -8,6 +8,7 @@ global.cameraHeight = 9 * TILESIZE;
 
 view_enabled = true;
 
+
 view_set_visible(viewId, true);
 view_set_wport(viewId, 1280);
 view_set_hport(viewId, 720);
