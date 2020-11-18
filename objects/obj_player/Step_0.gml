@@ -35,3 +35,7 @@ if(vDir == 1 && tilemap_get_at_pixel(collisionTilemap, x, bbox_bottom+1) == glob
 
 x += mvSpeed * hDir;
 y += mvSpeed * vDir;
+
+if(hDir != 0){
+	image_xscale = hDir;	
+}
